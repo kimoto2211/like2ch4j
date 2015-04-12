@@ -11,11 +11,9 @@ public class Run {
 	private String boardName;
 
 	public static void main(String[] args) {
-		Post.testpost();
-		//new Run().start(args);
-
+		//Post.vip2chNewThreadTestPost();
+		new Run().start(args);
 	}
-
 	private void start(String[] args) {
 		Options opts = new Options();
 		opts.addOption("b", "board", true, "掲示板を開いて起動します。");
@@ -24,12 +22,11 @@ public class Run {
 		HelpFormatter help = new HelpFormatter();
 
 		try {
-
 			cl = optParser.parse(opts, args);
 			boardName = cl.getOptionValue("b");
 			System.out.println("like2ch4j started...");
 
-			if(boardName != null){
+			if (boardName != null) {
 				System.out.println("with Board:" + boardName);
 			}
 
