@@ -7,44 +7,58 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-public class Post {
+public class ThreadPost extends BoardConnection {
 
-	private String protocol;
-	private String host;
-	private String board;
-	private String threadId;
-	@SuppressWarnings("unused")
-	private int port;
+	private String dir = "/test/bbs.cgi";
+	private String cookie;
+	private String hanamogera;
+	private String subject;
 	private String name;
 	private String mail;
 	private String mess;
-	private String dir;
-	private boolean newThread;
-	private String cookie;
-	private String hanamogera;
-	@SuppressWarnings("unused")
-	private boolean isRequiredHM;
+	private String charCode = "SJIS";
 
-	@SuppressWarnings("unused")
-	@Deprecated
-	private Post() {
+	public Connection dir(String dir) {
+		this.dir = dir;
+		return this;
 	}
 
-	public Post(String protocol, String host, String dir, String board,
-			String threadId, int port, String name, String mail, String mess,
-			boolean newThread, boolean isRequiredHM) {
-		super();
-		this.protocol = protocol;
-		this.host = host;
-		this.dir = dir;
-		this.board = board;
-		this.threadId = threadId;
-		this.port = port;
+	public Connection cookie(String cookie) {
+		this.cookie = cookie;
+		return this;
+	}
+
+	public Connection hanamogera(String hanamogera) {
+		this.hanamogera = hanamogera;
+		return this;
+	}
+
+	public Connection subject(String subject) {
+		this.subject = subject;
+		return this;
+	}
+
+	public Connection name(String name) {
 		this.name = name;
+		return this;
+	}
+
+	public Connection mail(String mail) {
 		this.mail = mail;
+		return this;
+	}
+
+	public Connection mess(String mess) {
 		this.mess = mess;
-		this.newThread = newThread;
-		this.isRequiredHM = isRequiredHM;
+		return this;
+	}
+
+	public Connection charCode(String charCode) {
+		this.charCode = charCode;
+		return this;
+	}
+
+	private ThreadPost() {
 	}
 
 	private String post() throws Exception {
@@ -55,38 +69,29 @@ public class Post {
 		conn.setRequestMethod("POST");
 		conn.setRequestProperty("Referer", protocol + "://" + host + "/"
 				+ board + "/");
+		if (this.cookie != null) {
+			conn.setRequestProperty("Cookie", this.cookie);
+		}
 		StringBuilder paramStr = new StringBuilder("&time="
 				+ System.currentTimeMillis() + hanamogera);
 
-		if (newThread) {
-			if (url.getHost().equals("jbbs.shitaraba.net")) {
-				paramStr.append("&SUBJECT="
-						+ URLEncoder.encode(threadId, "EUC-JP"));
-			} else {
-				paramStr.append("&subject="
-						+ URLEncoder.encode(threadId, "SJIS"));
-			}
-		} else {
-			paramStr.append("&KEY=" + threadId);
-		}
-		if (this.cookie != null) {
-			conn.setRequestProperty("Cookie", this.cookie);
+		if (url.getHost().equals("jbbs.shitaraba.net")) {
+			this.charCode("EUC-JP");
 		}
 
 		if (url.getHost().equals("jbbs.shitaraba.net")) {
 			paramStr.append("&DIR=" + board.split("/")[0] + "&BBS="
 					+ board.split("/")[1]);
-			paramStr.append("&submit=" + URLEncoder.encode("書き込む", "EUC-JP"));
-			paramStr.append("&FROM=" + URLEncoder.encode(name, "EUC-JP"));
-			paramStr.append("&mail=" + URLEncoder.encode(mail, "EUC-JP"));
-			paramStr.append("&MESSAGE=" + URLEncoder.encode(mess, "EUC-JP"));
 		} else {
 			paramStr.append("&bbs=" + board);
-			paramStr.append("&submit=" + URLEncoder.encode("書き込む", "SJIS"));
-			paramStr.append("&FROM=" + URLEncoder.encode(name, "SJIS"));
-			paramStr.append("&mail=" + URLEncoder.encode(mail, "SJIS"));
-			paramStr.append("&MESSAGE=" + URLEncoder.encode(mess, "SJIS"));
 		}
+
+		paramStr.append("&SUBJECT=" + URLEncoder.encode(subject, charCode));
+		paramStr.append("&submit=" + URLEncoder.encode("書き込む", charCode));
+		paramStr.append("&FROM=" + URLEncoder.encode(name, charCode));
+		paramStr.append("&mail=" + URLEncoder.encode(mail, charCode));
+		paramStr.append("&MESSAGE=" + URLEncoder.encode(mess, charCode));
+
 		PrintWriter pw = new PrintWriter(conn.getOutputStream());
 		pw.print(paramStr.toString());
 		pw.close();
@@ -105,8 +110,8 @@ public class Post {
 		System.out.println(httpSource.toString());
 
 		if (httpSource.toString().matches(".*<!-- 2ch_X:cookie -->.*")) {
-			this.hanamogera = this.getHanamogera(httpSource.toString());
-			this.cookie = conn.getHeaderField("Set-Cookie").split("; ")[0];
+			this.hanamogera(this.getHanamogera(httpSource.toString()));
+			this.cookie(conn.getHeaderField("Set-Cookie").split("; ")[0]);
 			this.post();
 		}
 
@@ -126,9 +131,9 @@ public class Post {
 
 	public static void vip2chNewThreadTestPost() {
 		try {
-			new Post("http", "ex14.vip2ch.com", "/test/bbs.cgi?guid=ON",
-					"zikken", "Testテスト", 80, "", "sage", "自作ツールのテスト", true,
-					true).post();
+			((ThreadPost) (new ThreadPost().host("ex14.vip2ch.com"))
+					.mail("sage").board("zikken").name("").mess("テスト")
+					.mail("sage").subject("テストテストTest")).post();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -137,9 +142,10 @@ public class Post {
 
 	public static void shitarabaNewThreadTestPost() {
 		try {
-			new Post("http", "jbbs.shitaraba.net", "/bbs/write.cgi",
-					"computer/44282", "Testテスト", 80, "", "sage", "自作ツールのテスト",
-					true, false).post();
+			((ThreadPost) (new ThreadPost().host("jbbs.shitaraba.net"))
+					.mail("sage").board("computer/44282").name("").mess("テスト")
+					.mail("sage").subject("テストテストTest").dir("/bbs/write.cgi"))
+					.post();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

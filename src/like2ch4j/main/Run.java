@@ -11,9 +11,11 @@ public class Run {
 	private String boardName;
 
 	public static void main(String[] args) {
-		//Post.vip2chNewThreadTestPost();
-		new Run().start(args);
+//		ThreadPost.vip2chNewThreadTestPost();
+		ThreadPost.shitarabaNewThreadTestPost();
+		// new Run().start(args);
 	}
+
 	private void start(String[] args) {
 		Options opts = new Options();
 		opts.addOption("b", "board", true, "掲示板を開いて起動します。");
