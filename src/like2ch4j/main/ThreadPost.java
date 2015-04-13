@@ -9,56 +9,11 @@ import java.net.URLEncoder;
 
 public class ThreadPost extends BoardConnection {
 
-	private String dir = "/test/bbs.cgi";
-	private String cookie;
-	private String hanamogera;
+	String dir = "/test/bbs.cgi";
 	private String subject;
-	private String name;
-	private String mail;
-	private String mess;
-	private String charCode = "SJIS";
-
-	public Connection dir(String dir) {
-		this.dir = dir;
-		return this;
-	}
-
-	public Connection cookie(String cookie) {
-		this.cookie = cookie;
-		return this;
-	}
-
-	public Connection hanamogera(String hanamogera) {
-		this.hanamogera = hanamogera;
-		return this;
-	}
-
-	public Connection subject(String subject) {
-		this.subject = subject;
-		return this;
-	}
-
-	public Connection name(String name) {
-		this.name = name;
-		return this;
-	}
-
-	public Connection mail(String mail) {
-		this.mail = mail;
-		return this;
-	}
-
-	public Connection mess(String mess) {
-		this.mess = mess;
-		return this;
-	}
-
-	public Connection charCode(String charCode) {
-		this.charCode = charCode;
-		return this;
-	}
 
 	private ThreadPost() {
+		charCode = "SJIS";
 	}
 
 	private String post() throws Exception {
@@ -76,19 +31,21 @@ public class ThreadPost extends BoardConnection {
 				+ System.currentTimeMillis() + hanamogera);
 
 		if (url.getHost().equals("jbbs.shitaraba.net")) {
-			this.charCode("EUC-JP");
+			charCode = "EUC-JP";
 		}
+
 
 		if (url.getHost().equals("jbbs.shitaraba.net")) {
 			paramStr.append("&DIR=" + board.split("/")[0] + "&BBS="
 					+ board.split("/")[1]);
+			paramStr.append("&NAME=" + URLEncoder.encode(name, charCode));
 		} else {
 			paramStr.append("&bbs=" + board);
+			paramStr.append("&FROM=" + URLEncoder.encode(name, charCode));
 		}
 
 		paramStr.append("&SUBJECT=" + URLEncoder.encode(subject, charCode));
 		paramStr.append("&submit=" + URLEncoder.encode("書き込む", charCode));
-		paramStr.append("&FROM=" + URLEncoder.encode(name, charCode));
 		paramStr.append("&mail=" + URLEncoder.encode(mail, charCode));
 		paramStr.append("&MESSAGE=" + URLEncoder.encode(mess, charCode));
 
@@ -105,8 +62,6 @@ public class ThreadPost extends BoardConnection {
 		br.close();
 		conn.disconnect();
 
-		System.out.println(cookie);
-		System.out.println(conn.getHeaderFields());
 		System.out.println(httpSource.toString());
 
 		if (httpSource.toString().matches(".*<!-- 2ch_X:cookie -->.*")) {
@@ -129,7 +84,7 @@ public class ThreadPost extends BoardConnection {
 				+ hs.substring(start, end).split(" |\"|=")[6];
 	}
 
-	public static void vip2chNewThreadTestPost() {
+	public static void vip2chTestPost() {
 		try {
 			((ThreadPost) (new ThreadPost().host("ex14.vip2ch.com"))
 					.mail("sage").board("zikken").name("").mess("テスト")
@@ -140,11 +95,11 @@ public class ThreadPost extends BoardConnection {
 
 	}
 
-	public static void shitarabaNewThreadTestPost() {
+	public static void shitarabaTestPost() {
 		try {
 			((ThreadPost) (new ThreadPost().host("jbbs.shitaraba.net"))
-					.mail("sage").board("computer/44282").name("").mess("テスト")
-					.mail("sage").subject("テストテストTest").dir("/bbs/write.cgi"))
+					.mail("sage").board("computer/44282").name("a").mess("テスト")
+					.subject("テストテストTest").dir("/bbs/write.cgi"))
 					.post();
 		} catch (Exception e) {
 			e.printStackTrace();
