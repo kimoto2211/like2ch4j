@@ -12,7 +12,7 @@ public class Run {
 
 	public static void main(String[] args) {
 		//ThreadPost.vip1chNewThreadTestPost();
-		ResponcePost.shitarabaTestPost();
+		ThreadRead.shitarabaTest();
 		// new Run().start(args);
 	}
 

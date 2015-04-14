@@ -29,7 +29,7 @@ public class ResponcePost extends ThreadConnection {
 				+ System.currentTimeMillis() + hanamogera);
 
 		if (url.getHost().equals("jbbs.shitaraba.net")) {
-			this.dir(dir+"/"+"board");
+			this.dir(dir + "/" + "board");
 			this.charCode("EUC-JP");
 		}
 
