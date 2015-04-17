@@ -11,8 +11,9 @@ public class BoardRead extends BoardConnection {
 		this.dir("subject.txt");
 	}
 
-	public void read() throws Exception {
-		URL url = new URL(this.protocol, this.host, "/"+this.board + "/" + this.dir);
+	public String read() throws Exception {
+		URL url = new URL(this.protocol, this.host, "/" + this.board + "/"
+				+ this.dir);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setDoOutput(true);
 		conn.setUseCaches(false);
@@ -33,17 +34,28 @@ public class BoardRead extends BoardConnection {
 		br.close();
 		conn.disconnect();
 
-		System.out.println(httpSource);
+		StringBuilder tmp = new StringBuilder();
+		for (String b : parse(httpSource.toString())) {
+			tmp.append(b + "\n");
+		}
+
+		return tmp.toString();
 
 	}
 
 	public static void shitarabaTest() {
 		try {
-			((BoardRead) new BoardRead().board("internet/21265").host(
-					"jbbs.shitaraba.net")).read();
+			System.out.println(((BoardRead) new BoardRead().board(
+					"internet/21265").host("jbbs.shitaraba.net")).read());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public String[] parse(String str) {
+		String[] strs = str.split("\\.cgi,");
+		return strs;
+
 	}
 }

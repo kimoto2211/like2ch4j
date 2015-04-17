@@ -2,17 +2,14 @@ package like2ch4j.main;
 
 public class Connection {
 
-	// BoardConnectionより
 	public Connection board(String board) {
 		return this;
 	}
 
-	// ThreadConnectionより
 	public Connection threadId(String threadId) {
 		return this;
 	}
 
-	// ThreadPostより
 	public Connection dir(String dir) {
 		return this;
 	}

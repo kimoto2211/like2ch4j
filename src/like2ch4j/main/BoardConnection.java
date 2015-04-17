@@ -50,4 +50,24 @@ public abstract class BoardConnection extends Like2chConnection {
 		this.mess = mess;
 		return this;
 	}
+	
+	public BoardConnection proto(String protocol) {
+		this.protocol = protocol;
+		return this;
+	}
+
+	public BoardConnection host(String host) {
+		this.host = host;
+		return this;
+	}
+
+	public BoardConnection port(int port) {
+		this.port = port;
+		return this;
+	}
+
+	public BoardConnection dir(String dir) {
+		this.dir = dir;
+		return this;
+	}
 }

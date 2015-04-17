@@ -21,7 +21,7 @@ public abstract class Like2chConnection extends Connection {
 		return this;
 	}
 
-	public Connection dir(String dir) {
+	public Like2chConnection dir(String dir) {
 		this.dir = dir;
 		return this;
 	}

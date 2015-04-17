@@ -8,10 +8,10 @@ import java.net.URL;
 public class ThreadRead extends ThreadConnection {
 	public ThreadRead() {
 		super();
-		this.dir("/bbs/read.cgi/");
+		this.dir("/bbs/rawmode.cgi/");
 	}
 
-	public void read() throws Exception {
+	public String read() throws Exception {
 		URL url = new URL(this.protocol, this.host, this.dir + board + "/"
 				+ this.threadId);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -19,15 +19,15 @@ public class ThreadRead extends ThreadConnection {
 		conn.setUseCaches(false);
 		conn.setRequestMethod("GET");
 		conn.setRequestProperty("Referer", protocol + "://" + host + "/"
-				+ board + "/");	
+				+ board + "/");
 		conn.setRequestProperty("Accept-Encoding", "gzip");
 		if (this.cookie != null) {
 			conn.setRequestProperty("Cookie", this.cookie);
 		}
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(
-				conn.getInputStream()));
-		StringBuilder httpSource=new StringBuilder();
+				conn.getInputStream(), "JISAutoDetect"));
+		StringBuilder httpSource = new StringBuilder();
 		String buff;
 		while (null != (buff = br.readLine())) {
 			httpSource.append(buff);
@@ -35,17 +35,29 @@ public class ThreadRead extends ThreadConnection {
 		br.close();
 		conn.disconnect();
 
-		System.out.println(httpSource);
+		StringBuilder tmp = new StringBuilder();
+		for (String b : parse(httpSource.toString())) {
+			tmp.append(b + "\n");
+		}
+
+		return tmp.toString();
 
 	}
 
 	public static void shitarabaTest() {
 		try {
-			((ThreadRead) new ThreadRead().threadId("1428843272")
-					.board("computer/44282").host("jbbs.shitaraba.net")).read();
+			System.out.println(((ThreadRead) new ThreadRead()
+					.threadId("1426157209").board("internet/21265")
+					.host("jbbs.shitaraba.net")).read());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public String[] parse(String str) {
+		String[] strs = str.split("<>");
+		return strs;
+
 	}
 }
